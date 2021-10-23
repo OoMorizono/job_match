@@ -1,5 +1,6 @@
 <x-guest-layout>
     <x-jet-authentication-card>
+
         <h2 class="text-center font-medium text-gray-700 mb-4">ユーザーアカウント登録</h2>
 
         <x-jet-validation-errors class="mb-4" />
@@ -18,6 +19,7 @@
                 <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
                     required />
             </div>
+
 
             <div class="mt-4">
                 <x-jet-label for="password" value="{{ __('Password') }}" />
