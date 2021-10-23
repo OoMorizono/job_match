@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobOfferController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,5 +18,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
+
+Route::resource('job_offers', JobOfferController::class)
+    ->only(['create', 'store', 'edit', 'update', 'destroy'])
+    ->middleware('auth:companies');
+
+Route::resource('job_offers', JobOfferController::class)
+    ->only(['show', 'index'])
+    ->middleware('auth:companies,users');
 
 require __DIR__ . '/auth.php';
