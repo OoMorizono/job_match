@@ -17,6 +17,7 @@ class JobOffer extends Model
         'occupation_id',
         'due_date',
         'description',
+        'status',
     ];
 
 
