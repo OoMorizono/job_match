@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Consts\CompanyConst;
 use App\Consts\JobOfferConst;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 
 class JobOffer extends Model
 {
     use HasFactory;
-
 
     protected $fillable = [
         'title',
@@ -19,6 +21,17 @@ class JobOffer extends Model
         'description',
         'status',
     ];
+
+
+    public function scopeMyJobOffer(Builder $query)
+    {
+        $query->where(
+            'company_id',
+            Auth::guard(CompanyConst::GUARD)->user()->id
+        );
+
+        return $query;
+    }
 
 
     public function company()
@@ -37,6 +50,10 @@ class JobOffer extends Model
         return $this->hasMany(JobOfferView::class);
     }
 
+    public function entries()
+    {
+        return $this->hasMany(Entry::class);
+    }
 
     public function scopeOpenData(Builder $query)
     {
@@ -45,6 +62,19 @@ class JobOffer extends Model
 
         return $query;
     }
+
+
+
+
+    public function scopeSearchStatus(Builder $query, $params)
+    {
+        if (isset($params['status'])) {
+            $query->where('status', $params['status']);
+        }
+
+        return $query;
+    }
+
 
 
     public function scopeSearch(Builder $query, $params)
@@ -56,14 +86,16 @@ class JobOffer extends Model
         return $query;
     }
 
+    
 
     public function scopeOrder(Builder $query, $params)
     {
-        if (empty($params['sort']) ||
+        if (
+            empty($params['sort']) ||
             (!empty($params['sort']) && $params['sort'] == JobOfferConst::SORT_NEW_ARRIVALS)
         ) {
-        $query->latest();
-                } elseif (!empty($params['sort']) && $params['sort'] == JobOfferConst::SORT_VIEW_RANK) {
+            $query->latest();
+        } elseif (!empty($params['sort']) && $params['sort'] == JobOfferConst::SORT_VIEW_RANK) {
 
             $query->withCount('jobOfferViews')
                 ->orderBy('job_offer_views_count', 'desc');

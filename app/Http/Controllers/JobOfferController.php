@@ -99,20 +99,31 @@ class JobOfferController extends Controller
      */
     public function show(JobOffer $jobOffer)
     {
+        $entry = '';
+        $entries = [];
+
         if (Auth::guard(UserConst::GUARD)->check()) {
             JobOfferView::updateOrCreate([
                 'job_offer_id' => $jobOffer->id,
                 'user_id' => Auth::guard(UserConst::GUARD)->user()->id,
             ]);
+            $entry = $jobOffer->entries()
+                ->where('user_id', Auth::guard(UserConst::GUARD)->user()->id)->first();
+        }
+        if (
+            Auth::guard(CompanyConst::GUARD)->check() &&
+            Auth::guard(CompanyConst::GUARD)->user()->id == $jobOffer->company_id
+        ) {
+            $entries = $jobOffer->entries()->with('user')->get();
         }
 
-        return view('job_offers.show', compact('jobOffer'));
+        return view('job_offers.show', compact('jobOffer', 'entry', 'entries'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\JobOffer  $jobOffer
+     * @param  \App\Models\JobOffer  $jobOfferp
      * @return \Illuminate\Http\Response
      */
     public function edit(JobOffer $jobOffer)
