@@ -13,7 +13,7 @@
                 <div>
                     <span>on {{ $jobOffer->created_at->format('Y-m-d') }}</span>
                     <span class="inline-block mx-1">|</span>
-                    <span>0 views</span>
+                    <span>{{ $jobOffer->jobOfferViews->count() }} views</span>
                 </div>
             </div>
             <p class="text-gray-700 text-base text-right">応募期限 :{{ $jobOffer->due_date }}</p>
@@ -21,8 +21,9 @@
                 {{ $jobOffer->title }}</h2>
             <div class="flex mt-1 mb-3">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-                <div><img src="{{ Auth::guard('companies')->user()->profile_photo_url }}" alt=""
-                        class="h-10 w-10 rounded-full object-cover mr-3"></div>
+                <div><img src="{{ $jobOffer->company->profile_photo_url }}" alt=""
+                        class="h-10 w-10 rounded-full object-cover mr-3">
+                </div>
                 @endif
                 <h3 class="text-lg h-10 leading-10">{{ $jobOffer->company->name }}</h3>
             </div>
